@@ -4,38 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        input{
+            padding: 10px 40px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+        
+    </style>
 </head>
 <body>
-    <h1>Bienvenido al procesador de cadenas</h1>
-    <p>Introduce hasta 7 cadenas y una imagen</p>
     <?php
-    /*isset($_POST['formulario']) Si el formulario ya se ha enviado alguna vez no me lo muestra*/
-    if(isset($_POST['formulario'])){
-        /*Meto las cadenas en un array vacio*/
-        $cadenas = array();
-        for($i = 0; $i < 7; $i++){
-            /*si el isset($_POST['text'.$i]) existe que introduzca el valor en la siguiente posicion del array*/
-            if(isset($_POST['text'.$i])){
-                $cadenas[] = trim($_POST['text'.$i]); //.trim() para eliminar espacios delante y detras
-            }
+        function soloLetras($c){
+            return preg_match("'(?!.*[^a-zA-Z]).+'", $c);
         }
-
-        /*Si el isset($_FILES['img']) existe lo almaceno en $img*/
-        if(isset($_FILES["img"])){
-            if(strcmp(explode("/",$_FILES["img"]["type"])[0], "image")){ //Lo separo y lo comparo con "image"
-                $img = $_FILES['img'];
-                $ruta ="./img/";
-                $origen =$_FILES["img"]["tmp_name"];
-                $destino = $ruta.$_FILES["img"]["name"];
-                move_uploaded_file($origen, $destino);
-            } else{ //Si no es imagen reinicio la pagina
-                alert("El archivo no es una imagen");
-                header("Refresh: 5s; url= procesamiento.php");
-            }
-            
-            
-        }
-
 
         function comprobarCadenas($c ){
             /*Para clasificar las cadenas usare un array con un booleano y el nombre de la categoria*/
@@ -75,33 +57,22 @@
             $categoria[9]=[false, "Formato desconocido"];
 
             /*Comprobar cadena*/
-            $categorias=""; //Aqui introducire a que categorias pertenece
+            $categorias= array(); //Aqui introducire a que categorias pertenece
+            
             /*1. Cadena vacía. Como le he hecho un trim la longitud de una cadena de solo espacios es 0*/
             if(strlen($c) == 0){
                 $categoria[0][0] = true;
                 $categorias.=$categoria[0][1]." ";
             }
 
-            $nPalabras=count(explode(" ", $c));//explode me separa por las palabras en espacios si hay mas de una
-            if($nPalabras==1){ //AQUI AGRUPO TODAS LAS CADENAS QUE SEAN DE UNA SOLA PALABRA CASO 2, 5, 6, 7, 8 y 9
-                /*2. Cadena con una única palabra (sólo letras, puede haber espacios delante y detrás). preg_match("'(?!.*[^a-zA-Z]).+'") NO PERMITE INTRODUCIR CARACTERES QUE NO SEAN LETRAS*/
-                if(preg_match("'(?!.*[^a-zA-Z]).+'", $c)){
-                    $categoria[1][0] = true;
-                    $categorias.=$categoria[1][1]." ";
-                }
 
-                /*5. Cadena con un número decimal. ^[0-9]+[.,][0-9]$ Emperzar por u numero, puede haber 0 o mas numeros, continuar por punto o coma, tener despues almenos un numero y  terminar por numero*/
-                if(preg_match("'^[0-9]+[.,][0-9]$'", $c)){
-                    $categorias.=$categoria[4][1]." ";
-                }
-            
-                /*6. Cadena con un único número impar.*/
-                if(is_numeric($c)){ //true si es numerico o si es string pero contiene numeros
-                    if(!((intval($c))%2==0)){ //Lo paso a int, si no se cumple ((intval($c))%2==0 es impar 
-                        $categoria[5][0] = true;
-                        $categorias.=$categoria[5][1]." ";
-                    }
-                }
+            $palabras= explode(" ", $c);
+            if(soloLetras($palabras)){
+                
+            }
+
+            $nPalabras=count(explode(" ", $c));//explode me separa por las palabras en espacios si hay mas de una
+            if($nPalabras==1){ //AQUI AGRUPO TODAS LAS CADENAS QUE SEAN DE UNA SOLA PALABRA CASO 7, 8 y 9
                 /*7. Número de telfono (9 cifras, empezando por 6, 7, 8 o 9 y prefijo, signo+ y 2 números).*/
                 if(preg_match("'^\+[0-9]{2}[6789][0-9]{8}'", $c)){// preg_match("'^\+[0-9]{2}[6789][0-9]{8}'", $c), empezar por + seguido de 2 cifras que sean 6789 y seguido de 8 cifras
                     $categoria[6][0] = true;
@@ -115,17 +86,36 @@
                 }
 
                 /*9. Contraseña*/
-                if(preg_match("'/(?=.*[0-9]){2,}(?=.*[A-Z])(?=.*[^a-zA-Z0-9]){3,}.{8,20}'", $c)) { //(?=.*[0-9]){2,}, almenos 2 numeros. (?=.*[A-Z]), almenos una mayuscula. (?=.*[^a-zA-Z0-9]){3,}, almenos 3 caracteres que no sean los del corchete
+                if(preg_match("'(?=.*[0-9]){2,}(?=.*[A-Z])(?=.*[^a-zA-Z0-9]){3,}.{8,20}'", $c)) { //(?=.*[0-9]){2,}, almenos 2 numeros. (?=.*[A-Z]), almenos una mayuscula. (?=.*[^a-zA-Z0-9]){3,}, almenos 3 caracteres que no sean los del corchete
                     $categoria[8][0] = true;
                     $categorias.=$categoria[8][1]." ";
                 }
 
+                /*2. Cadena con una única palabra (sólo letras, puede haber espacios delante y detrás). preg_match("'(?!.*[^a-zA-Z]).+'") NO PERMITE INTRODUCIR CARACTERES QUE NO SEAN LETRAS*/
+                if(preg_match("'(?!.*[^a-zA-Z]).+'", $c)){
+                    $categoria[1][0] = true;
+                    $categorias.=$categoria[1][1]." ";
+                }
+
             } else if($nPalabras==2){
+                
+
+                /*5. Cadena con un número decimal. [0-9]+[.,][0-9] Empezar por un numero, puede haber 0 o mas numeros, continuar por punto o coma, tener despues almenos un numero y  terminar por numero*/
+                if(preg_match("'[0-9]+[.,][0-9]'", $c)){
+                    $categorias.=$categoria[4][1]." ";
+                }
+            
+                /*6. Cadena con número impar.*/
+                if(preg_match("'[0-9]*[13579]'", $c)){ //true si es numerico o si es string pero contiene numeros
+                    $categoria[5][0] = true;
+                    $categorias.=$categoria[5][1]." ";
+                }
+                
                 /*3. Cadena con dos palabras (sólo letras, separadas por uno o variosespacios).*/
                 $palabras=explode(" ", $c);
                 $aux=true; //si una de las dos palabras no lo cumple se pone en false
                 foreach($palabras as $p){
-                    if(!preg_match("'(?!.*[^a-zA-Z]).+'", $palabras)){
+                    if(!preg_match("'(?!.*[^a-zA-Z]).+'", $p)){
                     $aux =false;
                     }
                 }
@@ -135,20 +125,11 @@
                 }
                 
             } else {
-                /*4. Cadena con una enumeración (tres o más palabras separadas con comas).*/ 
-                $palabras=explode(",", $c);
-                $aux=true;
-                
-                foreach($palabras as $p){
-                    if(!preg_match("'(?!.*[^a-zA-Z]).+'", $palabras)){
-                    $aux =false;
-                    }
-                }
-
-                if($aux){
+                /*4. Cadena con una enumeración (tres o más palabras separadas con comas).*/              
+                if(count(explode(",", $c))>=3){
                     $categoria[3][0] = true;
                     $categorias.=$categoria[3][1]." ";
-                }  
+                } 
             }
             
             /*10.Formato desconocido.*/
@@ -165,26 +146,78 @@
             return $categorias;
         }
 
-        echo "<table>
-            <tr><td>Cadenas</td><td>categorias</td></tr>";
-            foreach($cadenas as $c){
-                echo "<tr><td>$c</td><td>".comprobarCadenas($c)."</td></tr>";
-            }
-        echo "</table>";
+        /*isset($_POST['formulario']) Si el formulario ya se ha enviado alguna vez no me lo muestra*/
+        if(isset($_POST['formulario'])){
 
-    }else{
+            /*Meto las cadenas en un array vacio*/
+            $cadenas = array();
+            for($i = 0; $i < 7; $i++){
+                /*si el isset($_POST['text'.$i]) existe que introduzca el valor en la siguiente posicion del array*/
+                if(isset($_POST['text'.$i])){
+                    $cadenas[] = trim($_POST['text'.$i]); //.trim() para eliminar espacios delante y detras
+                }
+            }
+
+            echo "<table>
+                    <tr><th>Cadenas</th><th>categorias</th></tr>";
+                    foreach($cadenas as $c){
+                        echo "<tr><td>$c</td><td>".comprobarCadenas($c)."</td></tr>";
+                    }
+            echo "</div></div></div></table>";
+
+            
+
+            /*Si el isset($_FILES['img']) existe lo almaceno en $img*/
+            if(isset($_FILES["img"])){
+                if(strcmp(explode("/",$_FILES["img"]["type"])[0], "image")==0){ //Lo separo y lo comparo con "image"
+                    $img = $_FILES['img'];
+                    $ruta ="D:/xampp/htdocs//img/";
+
+                    echo $ruta;
+
+                    if(!file_exists($ruta)){
+                        mkdir($ruta);
+                    }
+
+                    $origen = $_FILES["img"]["tmp_name"];
+                    $opcion = "text".$_POST["opt"];
+                    $destino = $ruta.$_POST["$opcion"].".".explode("/",$_FILES["img"]["type"])[1];
+                    move_uploaded_file($origen, $destino);
+                } else{ //Si no es imagen reinicio la pagina
+                    
+                    header("Refresh: 5s; url= localhost/DWES_PRACTICA1/procesamiento.php");
+                }
+            }
+
+        }else{
         /*Formulario*/
-        echo "<form action='#' method='post' enctype='multipart/form-data'>
-            <input type='text' name='text1' placeholder='Introduce una cadena'><br>
-            <input type='text' name='text2' placeholder='Introduce una cadena'><br>
-            <input type='text' name='text3' placeholder='Introduce una cadena'><br>
-            <input type='text' name='text4' placeholder='Introduce una cadena'><br>
-            <input type='text' name='text5' placeholder='Introduce una cadena'><br>
-            <input type='text' name='text6' placeholder='Introduce una cadena'><br>
-            <input type='text' name='text7' placeholder='Introduce una cadena'><br><br>
-            <input type='file' name='img'><br><br>
-            <input type='submit' name='formulario' value='ENVIAR'>
-        </form>";
+        echo "<h1>Bienvenido al procesador de cadenas</h1>
+                <p>Introduce hasta 7 cadenas y una imagen</p>
+                    <form action='#' method='post' enctype='multipart/form-data'>
+                        <input type='text' name='text1' placeholder='Introduce una cadena'>
+                        <input type='radio' name='opt' value='1'><br>
+                        
+                        <input type='text' name='text2' placeholder='Introduce una cadena'>
+                        <input type='radio' name='opt' value='2'><br>
+
+                        <input type='text' name='text3' placeholder='Introduce una cadena'>
+                        <input type='radio' name='opt' value='3'><br>
+
+                        <input type='text' name='text4' placeholder='Introduce una cadena'>
+                        <input type='radio' name='opt' value='4'><br>
+
+                        <input type='text' name='text5' placeholder='Introduce una cadena'>
+                        <input type='radio' name='opt' value='5'><br>
+
+                        <input type='text' name='text6' placeholder='Introduce una cadena'>
+                        <input type='radio' name='opt' value='6'><br>
+
+                        <input type='text' name='text7' placeholder='Introduce una cadena'>
+                        <input type='radio' name='opt' value='7'><br><br>
+
+                        <input type='file' name='img'><br><br>
+                        <input type='submit' name='formulario' value='ENVIAR'>
+                    </form>";
     }
     ?>
 </body>
