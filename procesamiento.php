@@ -20,7 +20,7 @@
         }
 
         function comprobarCadenas($c ){
-            /*Para clasificar las cadenas usare un array con un booleano y el nombre de la categoria*/
+            /*Para clasificar las cadenas usare una matriz con un booleano y el nombre de la categoria*/
             /*1. Cadena vacía. */
             $categoria[0]=[false, "Cadena vacía"];
 
@@ -57,7 +57,7 @@
             $categoria[9]=[false, "Formato desconocido"];
 
             /*Comprobar cadena*/
-            $categorias= array(); //Aqui introducire a que categorias pertenece
+            $categorias= ""; //Aqui introducire a que categorias pertenece
             
             /*1. Cadena vacía. Como le he hecho un trim la longitud de una cadena de solo espacios es 0*/
             if(strlen($c) == 0){
@@ -65,72 +65,51 @@
                 $categorias.=$categoria[0][1]." ";
             }
 
+            //AQUI AGRUPO TODAS LAS CADENAS QUE SEAN EXCLUYENTES: 7, 8 y 9
+            /*7. Número de telfono (9 cifras, empezando por 6, 7, 8 o 9 y prefijo, signo+ y 2 números).*/
+            if(preg_match("'^\+[0-9]{2}\s?[6789]\s*([0-9]\s*){8}'", $c)){// preg_match("'^\+[0-9]{2}[6789][0-9]{8}'", $c), empezar por + seguido de 2 cifras que sean 6789 y seguido de 8 cifras
+                $categoria[6][0] = true;
+                $categorias.=$categoria[6][1]." ";
 
-            $palabras= explode(" ", $c);
-            if(soloLetras($palabras)){
-                
-            }
+            /*8. Número del DNI (8 números, con letra final mayúscula).*/
+            } else  if(preg_match("'^[0-9]{8}[A-Z]$'", $c)){ //preg_match("'^[0-9]{8}[A-Z]$'", $c), empezar por 8 numeros y terminar por letra mayuscula
+                $categoria[7][0] = true;
+                $categorias.=$categoria[7][1]." ";
 
-            $nPalabras=count(explode(" ", $c));//explode me separa por las palabras en espacios si hay mas de una
-            if($nPalabras==1){ //AQUI AGRUPO TODAS LAS CADENAS QUE SEAN DE UNA SOLA PALABRA CASO 7, 8 y 9
-                /*7. Número de telfono (9 cifras, empezando por 6, 7, 8 o 9 y prefijo, signo+ y 2 números).*/
-                if(preg_match("'^\+[0-9]{2}[6789][0-9]{8}'", $c)){// preg_match("'^\+[0-9]{2}[6789][0-9]{8}'", $c), empezar por + seguido de 2 cifras que sean 6789 y seguido de 8 cifras
-                    $categoria[6][0] = true;
-                    $categorias.=$categoria[6][1]." ";
-                }
+            /*9. Contraseña*/
+            } else if(preg_match("'^(?!.*\s)(?=.*[0-9]{2,})(?=.*[A-Z])(?=.*[^a-zA-Z0-9]{3,}).{8,20}$'", $c)) { //(?=.*[0-9]){2,}, almenos 2 numeros. (?=.*[A-Z]), almenos una mayuscula. (?=.*[^a-zA-Z0-9]){3,}, almenos 3 caracteres que no sean los del corchete
+                $categoria[8][0] = true;
+                $categorias.=$categoria[8][1]." ";
+            } else{
 
-                /*8. Número del DNI (8 números, con letra final mayúscula).*/
-                if(preg_match("'^[0-9]{8}[A-Z]$'", $c)){ //preg_match("'^[0-9]{8}[A-Z]$'", $c), empezar por 8 numeros y terminar por letra mayuscula
-                    $categoria[7][0] = true;
-                    $categorias.=$categoria[7][1]." ";
-                }
-
-                /*9. Contraseña*/
-                if(preg_match("'(?=.*[0-9]){2,}(?=.*[A-Z])(?=.*[^a-zA-Z0-9]){3,}.{8,20}'", $c)) { //(?=.*[0-9]){2,}, almenos 2 numeros. (?=.*[A-Z]), almenos una mayuscula. (?=.*[^a-zA-Z0-9]){3,}, almenos 3 caracteres que no sean los del corchete
-                    $categoria[8][0] = true;
-                    $categorias.=$categoria[8][1]." ";
-                }
-
-                /*2. Cadena con una única palabra (sólo letras, puede haber espacios delante y detrás). preg_match("'(?!.*[^a-zA-Z]).+'") NO PERMITE INTRODUCIR CARACTERES QUE NO SEAN LETRAS*/
-                if(preg_match("'(?!.*[^a-zA-Z]).+'", $c)){
-                    $categoria[1][0] = true;
-                    $categorias.=$categoria[1][1]." ";
-                }
-
-            } else if($nPalabras==2){
-                
-
-                /*5. Cadena con un número decimal. [0-9]+[.,][0-9] Empezar por un numero, puede haber 0 o mas numeros, continuar por punto o coma, tener despues almenos un numero y  terminar por numero*/
-                if(preg_match("'[0-9]+[.,][0-9]'", $c)){
-                    $categorias.=$categoria[4][1]." ";
-                }
-            
-                /*6. Cadena con número impar.*/
-                if(preg_match("'[0-9]*[13579]'", $c)){ //true si es numerico o si es string pero contiene numeros
-                    $categoria[5][0] = true;
-                    $categorias.=$categoria[5][1]." ";
-                }
-                
-                /*3. Cadena con dos palabras (sólo letras, separadas por uno o variosespacios).*/
-                $palabras=explode(" ", $c);
-                $aux=true; //si una de las dos palabras no lo cumple se pone en false
-                foreach($palabras as $p){
-                    if(!preg_match("'(?!.*[^a-zA-Z]).+'", $p)){
-                    $aux =false;
-                    }
-                }
-                if($aux){
-                    $categoria[2][0] = true;
-                    $categorias.=$categoria[2][1]." ";
-                }
-                
-            } else {
                 /*4. Cadena con una enumeración (tres o más palabras separadas con comas).*/              
-                if(count(explode(",", $c))>=3){
+                if(preg_match("'\b([a-zA-Z]+\s*,\s*){2}[a-zA-Z]+(?![0-9]])'", $c)){
                     $categoria[3][0] = true;
                     $categorias.=$categoria[3][1]." ";
-                } 
+
+                /*3. Cadena con dos palabras (sólo letras, separadas por uno o variosespacios).*/
+                } else if(preg_match("'\b[a-zA-Z]+\s+[a-zA-Z]+\b(?![0-9])'", $c)){
+                        $categoria[2][0] = true;
+                        $categorias.=$categoria[2][1]." ";
+
+                /*2. Cadena con una única palabra (sólo letras, puede haber espacios delante y detrás). preg_match("'(?!.*[^a-zA-Z]).+'") NO PERMITE INTRODUCIR CARACTERES QUE NO SEAN LETRAS*/
+                } else if(preg_match("'\b[a-zA-Z]+\b(?![0-9])'", $c)){
+                        $categoria[1][0] = true;
+                        $categorias.=$categoria[1][1]." ";
+                    }  
             }
+
+            /*5. Cadena con un número decimal. [0-9]+[.,][0-9] Empezar por un numero, puede haber 0 o mas numeros, continuar por punto o coma, tener despues almenos un numero y  terminar por numero*/
+            if(preg_match("'[0-9]+[.,][0-9]'", $c)){
+                $categorias.=$categoria[4][1]." ";
+            }
+            
+            /*6. Cadena con número impar.*/
+            if(preg_match("'[0-9]*[13579]\b'", $c)){
+                $categoria[5][0] = true;
+                $categorias.=$categoria[5][1]." ";
+            }
+                
             
             /*10.Formato desconocido.*/
             $aux= false; //para comprobar que todas las categorias estan en false
@@ -144,6 +123,35 @@
                 $categorias.=$categoria[9][1]." ";
             }
             return $categorias;
+        }
+
+        /*Si el isset($_FILES['img']) existe lo almaceno en $img*/
+        if(isset($_FILES["img"])){
+            if(strcmp(explode("/",$_FILES["img"]["type"])[0], "image")==0){ //Lo separo y lo comparo con "image"
+                $img = $_FILES['img'];
+                $ruta ="../img/";
+
+                if(!file_exists($ruta)){
+                    mkdir($ruta);
+                }
+
+                $origen = $_FILES["img"]["tmp_name"];
+
+                if(isset($_POST["opt"])){
+                    $opcion = "text".$_POST["opt"];
+                    if(isset($_POST["$opcion"])){
+                        $destino = $ruta.$_POST["$opcion"].".".explode("/",$_FILES["img"]["type"])[1];
+                    } 
+                } else {
+                    $destino = $ruta.$_FILES["img"]["name"];
+                }
+
+                
+
+                move_uploaded_file($origen, $destino);
+            } else{ //Si no es imagen reinicio la pagina
+                header("Location: ./procesamiento.php?err=1");
+            }
         }
 
         /*isset($_POST['formulario']) Si el formulario ya se ha enviado alguna vez no me lo muestra*/
@@ -163,31 +171,13 @@
                     foreach($cadenas as $c){
                         echo "<tr><td>$c</td><td>".comprobarCadenas($c)."</td></tr>";
                     }
-            echo "</div></div></div></table>";
+            echo "</div></div></div></table> <br>
+            <img src='$destino' width='200px' height='200px'>
+            <a href='./procesamiento.php'>VOLVER</a><br>";
 
             
 
-            /*Si el isset($_FILES['img']) existe lo almaceno en $img*/
-            if(isset($_FILES["img"])){
-                if(strcmp(explode("/",$_FILES["img"]["type"])[0], "image")==0){ //Lo separo y lo comparo con "image"
-                    $img = $_FILES['img'];
-                    $ruta ="D:/xampp/htdocs//img/";
-
-                    echo $ruta;
-
-                    if(!file_exists($ruta)){
-                        mkdir($ruta);
-                    }
-
-                    $origen = $_FILES["img"]["tmp_name"];
-                    $opcion = "text".$_POST["opt"];
-                    $destino = $ruta.$_POST["$opcion"].".".explode("/",$_FILES["img"]["type"])[1];
-                    move_uploaded_file($origen, $destino);
-                } else{ //Si no es imagen reinicio la pagina
-                    
-                    header("Refresh: 5s; url= localhost/DWES_PRACTICA1/procesamiento.php");
-                }
-            }
+            
 
         }else{
         /*Formulario*/
@@ -215,8 +205,13 @@
                         <input type='text' name='text7' placeholder='Introduce una cadena'>
                         <input type='radio' name='opt' value='7'><br><br>
 
-                        <input type='file' name='img'><br><br>
-                        <input type='submit' name='formulario' value='ENVIAR'>
+                        <input type='file' name='img'><br><br>";
+
+                        if(isset($_GET["err"])){
+                            echo "<span style='color:red'>El archivo introducido no es una imagen</span><br>";
+                            header("Refresh: 3; URL=./procesamiento.php");
+                        }
+                        echo "<input type='submit' name='formulario' value='ENVIAR'>
                     </form>";
     }
     ?>
