@@ -4,16 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        input{
-            padding: 10px 40px;
-            margin: 10px 0;
-            border-radius: 10px;
-        }
         
     </style>
 </head>
 <body>
+    
     <?php
         function soloLetras($c){
             return preg_match("'(?!.*[^a-zA-Z]).+'", $c);
@@ -167,7 +164,7 @@
                 }
             }
 
-            echo "<div><table>
+            echo "<div class='tabla'><table>
                     <tr><th>Cadenas</th><th>categorias</th></tr>";
                     foreach($cadenas as $c){
                         echo "<tr><td>$c</td><td>".comprobarCadenas($c)."</td></tr>";
@@ -182,7 +179,7 @@
 
         }else{
         /*Formulario*/
-        echo "<div>
+        echo "<div class='form'>
             <h1>Bienvenido al procesador de cadenas</h1>
                 <p>Introduce hasta 7 cadenas y una imagen</p>
                     <form action='#' method='post' enctype='multipart/form-data'>
@@ -205,15 +202,22 @@
                         <input type='radio' name='opt' value='6'><br>
 
                         <input type='text' name='text7' placeholder='Introduce una cadena'>
-                        <input type='radio' name='opt' value='7'><br><br>
-
-                        <input type='file' name='img'><br><br>";
+                        <input type='radio' name='opt' value='7'><br><br>";
 
                         if(isset($_GET["err"])){
-                            echo "<span style='color:red'>El archivo introducido no es una imagen</span><br>";
+                            echo "<span class='err'>El archivo introducido no es una imagen</span><br>";
                             header("Refresh: 3; URL=./procesamiento.php");
                         }
-                        echo "<input type='submit' name='formulario' value='ENVIAR'>
+
+                        echo "<div class='archivo'>
+                            <input type='file' name='img' id='img'/>
+                            <label for='img'>
+                            <svg xmlns='http://www.w3.org/2000/svg' class='iborrainputfile' width='20' height='17' viewBox='0 0 20 17'><path d='M10 0l-5.2 4.9h3.3v5.1h3.8v-5.1h3.3l-5.2-4.9zm9.3 11.5l-3.2-2.1h-2l3.4 2.6h-3.5c-.1 0-.2.1-.2.1l-.8 2.3h-6l-.8-2.2c-.1-.1-.1-.2-.2-.2h-3.6l3.4-2.6h-2l-3.2 2.1c-.4.3-.7 1-.6 1.5l.6 3.1c.1.5.7.9 1.2.9h16.3c.6 0 1.1-.4 1.3-.9l.6-3.1c.1-.5-.2-1.2-.7-1.5z'></path></svg>
+                            <span class='iborrainputfile'>Seleccionar archivo</span>
+                            </label>
+                        </div>  
+                        
+                        <input type='submit' name='formulario' value='ENVIAR'>
                     </form></div>";
     }
     ?>

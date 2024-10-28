@@ -1,0 +1,120 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    
+}
+
+/*form*/
+h1{
+    color: rgba(192,20,207,1);
+    font-size: 50px;
+    font-weight: bold;
+}
+
+p{  
+    margin: 10px 0;
+}
+
+.form {
+    background: linear-gradient(0deg, rgba(192,20,207,1) 5%, rgba(0,212,255,1) 100%);
+    box-shadow: 0 0 14px 1px rgba(0,212,255,1);
+    width: 60%;
+    margin: 0 auto;
+    margin-top: 20px;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.form input[type="text"]{
+    padding: 15px 40px;
+    margin: 10px 0;
+    border-radius: 10px;
+    background: transparent;
+    color: white;
+    border:1px solid white; 
+}
+
+input:focus{
+    outline: none;
+}
+
+::placeholder{
+    color: white;
+    font-size: 15px;
+}
+
+.archivo {
+    text-align: center;
+    background: transparent;
+    padding: 20px 0;
+    width: 50%;
+    margin: 0 auto;
+}
+
+#img {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+#img + label {
+    max-width: 80%;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    padding: 0.625rem 1.25rem;
+}
+
+#img + label svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    fill: currentColor;
+    margin-top: -0.25em;
+    margin-right: 0.25em;
+}
+
+.iborrainputfile {
+	font-size:16px; 
+	font-weight:normal;
+	font-family: 'Lato';
+}
+
+#img + label {
+    color: #fff;
+    background-color: transparent;
+    border-radius: 10px;
+    border: 1px solid white;
+}
+
+.err{
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+input[type="submit"]{
+    color: #fff;
+    background-color: transparent;
+    border-radius: 10px;
+    border: 1px solid white;
+    padding: 15px 40px;
+    margin-bottom: 20px;
+}
+
+/*tabla*/
