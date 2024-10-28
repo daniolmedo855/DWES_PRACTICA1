@@ -23,7 +23,7 @@ p{
     margin: 10px 0;
 }
 
-.form {
+.form, .tabla{
     background: linear-gradient(0deg, rgba(192,20,207,1) 5%, rgba(0,212,255,1) 100%);
     box-shadow: 0 0 14px 1px rgba(0,212,255,1);
     width: 60%;
@@ -31,6 +31,7 @@ p{
     margin-top: 20px;
     border-radius: 20px;
     padding: 20px;
+    padding-bottom: 20px;
 }
 
 .form input[type="text"]{
@@ -38,7 +39,6 @@ p{
     margin: 10px 0;
     border-radius: 10px;
     background: transparent;
-    color: white;
     border:1px solid white; 
 }
 
@@ -108,7 +108,9 @@ input:focus{
     font-weight: bold;
 }
 
-input[type="submit"]{
+input[type="submit"], a{
+    font-size: 15px;
+    text-decoration: none;
     color: #fff;
     background-color: transparent;
     border-radius: 10px;
@@ -118,3 +120,27 @@ input[type="submit"]{
 }
 
 /*tabla*/
+.tabla{
+    padding-bottom: 40px;
+}
+
+.tabla table{
+    margin: 0 auto;
+    margin-top: 10px;
+    border-collapse: collapse;
+    background-color: white;
+    color: black;
+    box-shadow: 0 0 14px 1px white;
+}
+
+.tabla td, th{
+    padding: 10px 40px;
+    border: 1px solid black;
+}
+
+.tabla img{
+    margin: 20px 0 40px 0;
+    border: solid 2px white;
+    border-radius: 20px;
+    box-shadow: 0 0 14px 1px white;
+}

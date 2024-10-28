@@ -64,7 +64,7 @@
 
             //AQUI AGRUPO TODAS LAS CADENAS QUE SEAN EXCLUYENTES: 7, 8 y 9
             /*7. Número de telfono (9 cifras, empezando por 6, 7, 8 o 9 y prefijo, signo+ y 2 números).*/
-            if(preg_match("'^\+[0-9]{2}\s?[6789]\s*([0-9]\s*){8}'", $c)){// preg_match("'^\+[0-9]{2}[6789][0-9]{8}'", $c), empezar por + seguido de 2 cifras que sean 6789 y seguido de 8 cifras
+            if(preg_match("'^\+[0-9]{2}\s?[6789]\s*([0-9]\s*){8}$'", $c)){// preg_match("'^\+[0-9]{2}[6789][0-9]{8}'", $c), empezar por + seguido de 2 cifras que sean 6789 y seguido de 8 cifras
                 $categoria[6][0] = true;
                 $categorias[]=$categoria[6][1]." ";
 
@@ -157,7 +157,7 @@
 
             /*Meto las cadenas en un array vacio*/
             $cadenas = array();
-            for($i = 0; $i < 7; $i++){
+            for($i = 0; $i <= 7; $i++){
                 /*si el isset($_POST['text'.$i]) existe que introduzca el valor en la siguiente posicion del array*/
                 if(isset($_POST['text'.$i])){
                     $cadenas[] = trim($_POST['text'.$i]); //.trim() para eliminar espacios delante y detras
@@ -165,13 +165,13 @@
             }
 
             echo "<div class='tabla'><table>
-                    <tr><th>Cadenas</th><th>categorias</th></tr>";
+                    <tr><th>CADENAS</th><th>CATEGORIAS</th></tr>";
                     foreach($cadenas as $c){
                         echo "<tr><td>$c</td><td>".comprobarCadenas($c)."</td></tr>";
                     }
             echo "</table> <br>
-            <img src='$destino' width='200px' height='200px'>
-            <a href='./procesamiento.php'>VOLVER</a><br></div>";
+            <img src='$destino' width='200px' height='200px'><br>
+            <a href='./procesamiento.php'>VOLVER</a></div>";
 
             
 
